@@ -22,8 +22,8 @@ export default function Navbar({
 
   const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const model = e.target.value
-    setSelectedModel(model)
-    onModelChange(model)
+    setSelectedModel(model)//navbar içi state
+    onModelChange(model)//app.tsx'e gönderiyoruz
   }
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

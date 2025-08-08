@@ -1,5 +1,3 @@
-// src/mock/mockHotels.ts
-
 export interface Room {
   type: string
   pricePerNight: number

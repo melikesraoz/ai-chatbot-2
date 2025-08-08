@@ -6,6 +6,8 @@ interface Message {
   sender: 'user' | 'bot'
   message: string
   timestamp: string
+  isEdited?: boolean
+  originalMessage?: string
 }//tek bir mesajın bilgileri
 
 interface Chat {
@@ -28,6 +30,10 @@ interface ChatContextType {
   updateChatTitle: (chatId: string, title: string) => void
   clearChat: (chatId: string) => void
   updateChatLanguage: (chatId: string, language: 'tr' | 'en' | 'de' | 'ru') => void
+  editMessage: (chatId: string, messageId: string, newMessage: string) => void
+  deleteMessage: (chatId: string, messageId: string) => void
+  regenerateResponse: (chatId: string, messageId: string) => Promise<Message | undefined>
+  clearAllData: () => void
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined)
@@ -51,33 +57,60 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   const currentChat = chats.find(chat => chat.id === currentChatId) || null
 
   useEffect(() => {
-    const savedChats = localStorage.getItem('ai-chatbot-chats')
-    const savedCurrentChatId = localStorage.getItem('ai-chatbot-current-chat-id')
-    
-    if (savedChats) {
+    const loadSavedData = () => {
       try {
-        const parsedChats = JSON.parse(savedChats)
-        setChats(parsedChats)
+        const savedChats = localStorage.getItem('ai-chatbot-chats')
+        const savedCurrentChatId = localStorage.getItem('ai-chatbot-current-chat-id')
         
-        if (savedCurrentChatId && parsedChats.find((chat: Chat) => chat.id === savedCurrentChatId)) {
-          setCurrentChatId(savedCurrentChatId)
+        if (savedChats) {
+          const parsedChats = JSON.parse(savedChats)
+          
+          if (Array.isArray(parsedChats)) {
+            setChats(parsedChats)
+            
+            if (savedCurrentChatId && parsedChats.find((chat: Chat) => chat.id === savedCurrentChatId)) {
+              setCurrentChatId(savedCurrentChatId)
+            } else if (parsedChats.length > 0) {
+              setCurrentChatId(parsedChats[0].id)
+            }
+          } else {
+            console.warn('Kaydedilen sohbet verisi geçersiz format')
+            localStorage.removeItem('ai-chatbot-chats')
+          }
         }
       } catch (error) {
         console.error('Sohbetler yüklenirken hata:', error)
+        
+        localStorage.removeItem('ai-chatbot-chats')
+        localStorage.removeItem('ai-chatbot-current-chat-id')
       }
     }
+
+    loadSavedData()
   }, [])
 
 
-  useEffect(() => {//local storega a kaydediyoruz
-    localStorage.setItem('ai-chatbot-chats', JSON.stringify(chats))
+  useEffect(() => {
+    try {
+      if (chats.length > 0) {
+        localStorage.setItem('ai-chatbot-chats', JSON.stringify(chats))
+      } else {
+        localStorage.removeItem('ai-chatbot-chats')
+      }
+    } catch (error) {
+      console.error('Sohbetler kaydedilirken hata:', error)
+    }
   }, [chats])
 
   useEffect(() => {
-    if (currentChatId) {
-      localStorage.setItem('ai-chatbot-current-chat-id', currentChatId)
-    } else {
-      localStorage.removeItem('ai-chatbot-current-chat-id')
+    try {
+      if (currentChatId) {
+        localStorage.setItem('ai-chatbot-current-chat-id', currentChatId)
+      } else {
+        localStorage.removeItem('ai-chatbot-current-chat-id')
+      }
+    } catch (error) {
+      console.error('Mevcut sohbet ID kaydedilirken hata:', error)
     }
   }, [currentChatId])
 
@@ -106,8 +139,8 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
         const updatedMessages = [...chat.messages, message]
         let title = chat.title
         if (message.sender === 'user' && chat.messages.length === 0 && chat.title === 'Yeni Sohbet') {
-          title = message.message.length > 30 
-            ? message.message.substring(0, 30) + '...' 
+          title = message.message.length > 10
+            ? message.message.substring(0, 10) + '...' 
             : message.message
         }
         
@@ -123,11 +156,19 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   }
 
   const deleteChat = (chatId: string) => {
-    setChats(prev => prev.filter(chat => chat.id !== chatId))
-    if (currentChatId === chatId) {
-      const remainingChats = chats.filter(chat => chat.id !== chatId)
-      setCurrentChatId(remainingChats.length > 0 ? remainingChats[0].id : null)
-    }
+    setChats(prev => {
+      const updatedChats = prev.filter(chat => chat.id !== chatId)
+      
+      if (currentChatId === chatId) {
+        if (updatedChats.length > 0) {
+          setCurrentChatId(updatedChats[0].id)
+        } else {
+          setCurrentChatId(null)
+        }
+      }
+      
+      return updatedChats
+    })
   }
 
   const updateChatTitle = (chatId: string, title: string) => {
@@ -148,6 +189,85 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     ))
   }
 
+  const editMessage = (chatId: string, messageId: string, newMessage: string) => {
+    setChats(prev => prev.map(chat => {
+      if (chat.id === chatId) {
+        const updatedMessages = chat.messages.map(msg => {
+          if (msg.id === messageId) {
+            return {
+              ...msg,
+              message: newMessage,
+              isEdited: true,
+              originalMessage: msg.originalMessage || msg.message
+            }
+          }
+          return msg
+        })
+        
+        return {
+          ...chat,
+          messages: updatedMessages,
+          updatedAt: new Date().toISOString()
+        }
+      }
+      return chat
+    }))
+  }
+
+  const deleteMessage = (chatId: string, messageId: string) => {
+    setChats(prev => prev.map(chat => {
+      if (chat.id === chatId) {
+        const updatedMessages = chat.messages.filter(msg => msg.id !== messageId)
+        
+        return {
+          ...chat,
+          messages: updatedMessages,
+          updatedAt: new Date().toISOString()
+        }
+      }
+      return chat
+    }))
+  }
+
+  const regenerateResponse = async (chatId: string, messageId: string) => {
+    const chat = chats.find(c => c.id === chatId)
+    if (!chat) return
+
+    const messageIndex = chat.messages.findIndex(msg => msg.id === messageId)
+    if (messageIndex === -1 || chat.messages[messageIndex].sender !== 'bot') return
+
+    let userMessageIndex = messageIndex - 1
+    while (userMessageIndex >= 0 && chat.messages[userMessageIndex].sender !== 'user') {
+      userMessageIndex--
+    }
+
+    if (userMessageIndex === -1) return
+
+    const userMessage = chat.messages[userMessageIndex]
+    
+    const messagesBeforeResponse = chat.messages.slice(0, messageIndex)
+    
+    setChats(prev => prev.map(c => {
+      if (c.id === chatId) {
+        return {
+          ...c,
+          messages: messagesBeforeResponse,
+          updatedAt: new Date().toISOString()
+        }
+      }
+      return c
+    }))
+
+    return userMessage
+  }
+
+  const clearAllData = () => {
+    setChats([])
+    setCurrentChatId(null)
+    localStorage.removeItem('ai-chatbot-chats')
+    localStorage.removeItem('ai-chatbot-current-chat-id')
+  }
+
   return (
     <ChatContext.Provider value={{
       chats,
@@ -159,7 +279,11 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
       deleteChat,
       updateChatTitle,
       clearChat,
-      updateChatLanguage
+      updateChatLanguage,
+      editMessage,
+      deleteMessage,
+      regenerateResponse,
+      clearAllData
     }}>
       {children}
     </ChatContext.Provider>

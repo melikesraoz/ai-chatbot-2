@@ -1,69 +1,129 @@
-# React + TypeScript + Vite
+# AI Chatbot
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Modern ve kullanıcı dostu bir AI chatbot uygulaması. Farklı modlarda çalışabilir ve çoklu dil desteği sunar.
 
-Currently, two official plugins are available:
+## Özellikler
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 🤖 AI Modları
+- **Genel Sohbet**: Genel konular hakkında sohbet
+- **Otel Asistanı**: Otel rezervasyonu ve bilgi alma
+- **Sağlık Danışmanı**: Genel sağlık bilgileri ve öneriler
 
-## Expanding the ESLint configuration
+### 🌍 Çoklu Dil Desteği
+- Türkçe (TR)
+- İngilizce (EN)
+- Almanca (DE)
+- Rusça (RU)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 💬 Sohbet Yönetimi
+- Yeni sohbet oluşturma
+- Sohbet geçmişi (localStorage ile kalıcı)
+- Sohbet başlığı düzenleme
+- Sohbet silme
+- Sohbet temizleme
+- Sayfa yenilendikten sonra sohbetler korunur
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### ✏️ Mesaj Düzenleme Özellikleri
+- **Mesaj Düzenleme**: Kullanıcı mesajlarını düzenleme
+- **Mesaj Silme**: İstenmeyen mesajları silme
+- **Yeniden Yanıt Üretme**: Bot yanıtlarını yeniden üretme
+- **Düzenleme Geçmişi**: Düzenlenen mesajları işaretleme
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### 🎨 Kullanıcı Arayüzü
+- Modern ve temiz tasarım
+- Karanlık/Aydınlık tema desteği
+- Responsive tasarım (mobil uyumlu)
+- Gerçek zamanlı yazma göstergesi
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Kullanım
+
+### Mesaj Düzenleme
+1. Herhangi bir mesajın üzerine gelin
+2. Sağ üst köşedeki "⋮" butonuna tıklayın
+3. "Düzenle" seçeneğini seçin
+4. Mesajı düzenleyin ve "Kaydet" butonuna tıklayın
+
+### Mesaj Silme
+1. Mesajın üzerine gelin
+2. "⋮" butonuna tıklayın
+3. "Sil" seçeneğini seçin
+
+### Yeniden Yanıt Üretme
+1. Bot yanıtının üzerine gelin
+2. "⋮" butonuna tıklayın
+3. "Yeniden Yanıtla" seçeneğini seçin
+
+## Kurulum
+
+```bash
+# Bağımlılıkları yükleyin
+npm install
+
+# Geliştirme sunucusunu başlatın
+npm run dev
+
+# Production build oluşturun
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Teknolojiler
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **Frontend**: React 18 + TypeScript
+- **Styling**: CSS3 (CSS Variables)
+- **State Management**: React Context API
+- **Build Tool**: Vite
+- **AI Integration**: OpenAI API
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Proje Yapısı
+
 ```
+src/
+├── components/          # React bileşenleri
+│   ├── ChatArea.tsx    # Ana sohbet alanı
+│   ├── Navbar.tsx      # Navigasyon çubuğu
+│   └── Sidebar.tsx     # Yan panel
+├── contexts/           # React Context'ler
+│   ├── ChatContext.tsx # Sohbet yönetimi
+│   ├── LanguageContext.tsx # Dil yönetimi
+│   └── SettingsContext.tsx # Ayarlar
+├── lib/               # Yardımcı fonksiyonlar
+│   ├── getHotelData.ts # Otel veri yönetimi
+│   └── getSystemPrompt.ts # Sistem prompt'ları
+├── mock/              # Mock veriler
+│   └── mockHotels.ts  # Otel verileri
+├── prompts/           # AI prompt'ları
+│   └── prompt.ts      # Prompt şablonları
+└── utils/             # Yardımcı araçlar
+    └── fetchChatResponse.ts # API çağrıları
+```
+
+## Özellik Detayları
+
+### Mesaj Düzenleme Sistemi
+- Kullanıcı mesajları düzenlenebilir
+- Düzenlenen mesajlar "(düzenlendi)" etiketi ile işaretlenir
+- Orijinal mesaj geçmişi korunur
+- Bot yanıtları yeniden üretilebilir
+
+### Otel Asistanı
+- Gerçek zamanlı oda müsaitliği kontrolü
+- Dinamik fiyatlandırma
+- Detaylı otel bilgileri
+- Rezervasyon süreci
+
+### Çoklu Dil Desteği
+- Tüm arayüz çevirileri
+- AI yanıtları seçilen dilde
+- Dil değiştirme anında etkili
+
+## Katkıda Bulunma
+
+1. Fork yapın
+2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
+3. Commit yapın (`git commit -m 'Add amazing feature'`)
+4. Push yapın (`git push origin feature/amazing-feature`)
+5. Pull Request oluşturun
+
+## Lisans
+
+Bu proje MIT lisansı altında lisanslanmıştır.

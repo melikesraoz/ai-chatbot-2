@@ -9,7 +9,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const { t } = useLanguage()
-  const { chats, currentChatId, createNewChat, selectChat, deleteChat, updateChatTitle, clearChat } = useChat()
+  const { chats, currentChatId, createNewChat, selectChat, deleteChat, updateChatTitle, clearChat, clearAllData } = useChat()
   const [editingChatId, setEditingChatId] = useState<string | null>(null)
   const [editingTitle, setEditingTitle] = useState('')
 
@@ -150,6 +150,18 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             )}
           </div>
         </div>
+        
+        {import.meta.env.DEV && (
+          <div className="debug-section">
+            <button 
+              className="debug-clear-btn" 
+              onClick={clearAllData}
+              title="Tüm verileri temizle"
+            >
+              ×
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

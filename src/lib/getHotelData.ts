@@ -1,5 +1,3 @@
-// src/lib/getHotelData.ts
-
 import { mockHotels } from '../mock/mockHotels'
 import type { Hotel, Room } from '../mock/mockHotels'
 
@@ -8,7 +6,7 @@ export function getHotelById(hotelId: string): Hotel | undefined {
 }
 
 export function getDefaultHotel(): Hotel {
-  return mockHotels[0] // Sunrise Hotel as default
+  return mockHotels[0] 
 }
 
 export function getAllHotels(): Hotel[] {

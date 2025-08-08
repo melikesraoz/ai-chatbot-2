@@ -27,7 +27,14 @@ const translations = {
     'no_chats': 'Henüz sohbet yok',
     'delete_chat': 'Sohbeti sil',
     'edit_chat': 'Sohbeti düzenle',
-    'clear_chat': 'Sohbeti temizle'
+    'clear_chat': 'Sohbeti temizle',
+    'edit_message': 'Düzenle',
+    'delete_message': 'Sil',
+    'regenerate_response': 'Yeniden Yanıtla',
+    'save': 'Kaydet',
+    'cancel': 'İptal',
+    'edited': 'düzenlendi',
+    'options': 'Seçenekler'
   },
   en: {
     'new_chat': 'New Chat',
@@ -46,7 +53,14 @@ const translations = {
     'no_chats': 'No chats yet',
     'delete_chat': 'Delete chat',
     'edit_chat': 'Edit chat',
-    'clear_chat': 'Clear chat'
+    'clear_chat': 'Clear chat',
+    'edit_message': 'Edit',
+    'delete_message': 'Delete',
+    'regenerate_response': 'Regenerate Response',
+    'save': 'Save',
+    'cancel': 'Cancel',
+    'edited': 'edited',
+    'options': 'Options'
   },
   de: {
     'new_chat': 'Neuer Chat',
@@ -65,7 +79,14 @@ const translations = {
     'no_chats': 'Noch keine Chats',
     'delete_chat': 'Chat löschen',
     'edit_chat': 'Chat bearbeiten',
-    'clear_chat': 'Chat leeren'
+    'clear_chat': 'Chat leeren',
+    'edit_message': 'Bearbeiten',
+    'delete_message': 'Löschen',
+    'regenerate_response': 'Antwort neu generieren',
+    'save': 'Speichern',
+    'cancel': 'Abbrechen',
+    'edited': 'bearbeitet',
+    'options': 'Optionen'
   },
   ru: {
     'new_chat': 'Новый чат',
@@ -84,7 +105,14 @@ const translations = {
     'no_chats': 'Пока нет чатов',
     'delete_chat': 'Удалить чат',
     'edit_chat': 'Редактировать чат',
-    'clear_chat': 'Очистить чат'
+    'clear_chat': 'Очистить чат',
+    'edit_message': 'Редактировать',
+    'delete_message': 'Удалить',
+    'regenerate_response': 'Перегенерировать ответ',
+    'save': 'Сохранить',
+    'cancel': 'Отмена',
+    'edited': 'отредактировано',
+    'options': 'Опции'
   }
 }
 
